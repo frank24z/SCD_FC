@@ -37,7 +37,6 @@
 
         .active { display: flex; }
 
-        /* Estilos de la Pantalla de Bloqueo */
         .lock-input {
             background: #2f3542;
             border: 2px solid #57606f;
@@ -81,6 +80,7 @@
             cursor: pointer;
             font-weight: bold;
             box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4);
+            margin-top: 10px;
         }
 
         #final-message {
@@ -109,14 +109,14 @@
 
     <div id="screen1" class="screen animate__animated animate__fadeIn">
         <div style="font-size: 5rem;">🎁</div>
-        <h1>¡Feliz Cumpleaños!</h1>
+        <h1>¡Feliz Cumpleaños Enanita!</h1>
         <p>Has logrado entrar. Hoy es un día especial y tengo algo preparado para ti.</p>
         <button class="btn-action" onclick="nextScreen(2)">¿Qué será?</button>
     </div>
 
     <div id="screen2" class="screen animate__animated animate__fadeIn">
         <h1>¡Desbloquea tu salida!</h1>
-        <p>Lanza confeti 5 veces para revelar las opciones</p>
+        <p>Lanza confeti para revelar las opciones</p>
         <div id="count-display" class="counter">5</div>
         <button class="btn-action" onclick="tapConfetti()">¡LANZAR! 🎉</button>
     </div>
@@ -152,13 +152,15 @@
 
     <div id="final-message">
         <h2 id="chosen-title" style="color: var(--accent); font-size: 2.5rem;"></h2>
-        <p id="chosen-desc" style="font-size: 1.2rem; text-align: center;"></p>
+        <p id="chosen-desc" style="font-size: 1.2rem; text-align: center; margin-bottom: 20px;"></p>
+        <button id="waButton" class="btn-action" style="background-color: #25d366;">Confirmar por WhatsApp ✅</button>
         <div style="font-size: 4rem; margin: 20px;">🎂✨💖</div>
-        <button class="btn-action" onclick="location.reload()">Empezar de nuevo</button>
     </div>
 
     <script>
         let clicks = 5;
+        // !!! CONFIGURACIÓN: CAMBIA ESTO !!!
+        const MI_TELEFONO = "56967044419"; // Pon tu número con código de país, sin el +
 
         function checkPass() {
             const pass = document.getElementById('passInput').value;
@@ -168,7 +170,6 @@
             } else {
                 error.style.display = 'block';
                 document.getElementById('passInput').value = "";
-                // Pequeña vibración visual de error
                 document.getElementById('screen0').classList.add('animate__shakeX');
                 setTimeout(() => document.getElementById('screen0').classList.remove('animate__shakeX'), 500);
             }
@@ -197,7 +198,12 @@
             document.getElementById('chosen-desc').innerText = "Has elegido: " + titulo + ". " + desc;
             document.getElementById('final-message').style.display = 'flex';
             
-            // Lluvia de confeti infinita
+            // Configura el botón de WhatsApp
+            const textoWA = `¡Amor! Ya desbloqueé mi regalo de 27 años 🎂. Elegí el: ${titulo}. Nos vemos luego ❤️`;
+            const waUrl = `https://wa.me/${MI_TELEFONO}?text=${encodeURIComponent(textoWA)}`;
+            document.getElementById('waButton').onclick = () => { window.open(waUrl, '_blank'); };
+
+            // Confeti infinito
             var duration = 15 * 1000;
             var animationEnd = Date.now() + duration;
             var interval = setInterval(function() {
