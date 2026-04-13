@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Sorpresa de Cumpleaños!</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff4757;
+            --secondary: #2f3542;
+            --accent: #ffa502;
+            --error: #eb4d4b;
+        }
+        body {
+            margin: 0;
+            background: #1e1e2e;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .active { display: flex; }
+
+        /* Estilos de la Pantalla de Bloqueo */
+        .lock-input {
+            background: #2f3542;
+            border: 2px solid #57606f;
+            border-radius: 15px;
+            padding: 15px;
+            font-size: 2rem;
+            color: var(--accent);
+            text-align: center;
+            width: 150px;
+            letter-spacing: 10px;
+            margin: 20px 0;
+            outline: none;
+        }
+        .lock-input:focus { border-color: var(--primary); }
+
+        h1 { font-size: 2.5rem; margin: 10px 0; color: var(--primary); }
+        .counter { font-size: 5rem; font-weight: bold; color: var(--accent); }
+        
+        .card-plan {
+            background: #2f3542;
+            border-radius: 15px;
+            padding: 15px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: 0.3s;
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+        }
+        .card-plan:hover { border-color: var(--primary); transform: translateY(-3px); }
+
+        .btn-action {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4);
+        }
+
+        #final-message {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 100;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="screen0" class="screen active animate__animated animate__fadeIn">
+        <div style="font-size: 4rem;">🔒</div>
+        <h2>Acceso Privado</h2>
+        <p>Ingresa el código secreto para continuar:</p>
+        <input type="password" id="passInput" class="lock-input" maxlength="4" placeholder="****">
+        <button class="btn-action" onclick="checkPass()">Abrir Regalo</button>
+        <p id="errorMsg" style="color: var(--error); margin-top: 10px; display: none;">Código incorrecto. Inténtalo de nuevo.</p>
+    </div>
+
+    <div id="screen1" class="screen animate__animated animate__fadeIn">
+        <div style="font-size: 5rem;">🎁</div>
+        <h1>¡Feliz Cumpleaños!</h1>
+        <p>Has logrado entrar. Hoy es un día especial y tengo algo preparado para ti.</p>
+        <button class="btn-action" onclick="nextScreen(2)">¿Qué será?</button>
+    </div>
+
+    <div id="screen2" class="screen animate__animated animate__fadeIn">
+        <h1>¡Desbloquea tu salida!</h1>
+        <p>Lanza confeti 5 veces para revelar las opciones</p>
+        <div id="count-display" class="counter">5</div>
+        <button class="btn-action" onclick="tapConfetti()">¡LANZAR! 🎉</button>
+    </div>
+
+    <div id="screen3" class="screen animate__animated animate__fadeIn">
+        <h2>✨ ¡Bien hecho! ✨</h2>
+        <p>Elige tu destino favorito para hoy:</p>
+
+        <div class="card-plan" onclick="finalizar('Aventura Gourmet 🍕', '¡Prepara el hambre!')">
+            <span style="font-size: 2rem;">🍷</span>
+            <div style="text-align: left;">
+                <b style="color:var(--accent)">Aventura Gourmet</b>
+                <div style="font-size: 0.8rem; opacity: 0.7;">Cena increíble y brindis especial.</div>
+            </div>
+        </div>
+
+        <div class="card-plan" onclick="finalizar('Modo Relax 🎬', 'Noche de paz y muchas palomitas.')">
+            <span style="font-size: 2rem;">🍿</span>
+            <div style="text-align: left;">
+                <b style="color:var(--accent)">Cine y Chill</b>
+                <div style="font-size: 0.8rem; opacity: 0.7;">Peli, mantita y desconexión.</div>
+            </div>
+        </div>
+
+        <div class="card-plan" onclick="finalizar('Misterio Total ❓', 'Confía en mí, te va a gustar.')">
+            <span style="font-size: 2rem;">🎁</span>
+            <div style="text-align: left;">
+                <b style="color:var(--accent)">¡Sorpresa!</b>
+                <div style="font-size: 0.8rem; opacity: 0.7;">Un plan secreto que solo yo sé.</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="final-message">
+        <h2 id="chosen-title" style="color: var(--accent); font-size: 2.5rem;"></h2>
+        <p id="chosen-desc" style="font-size: 1.2rem; text-align: center;"></p>
+        <div style="font-size: 4rem; margin: 20px;">🎂✨💖</div>
+        <button class="btn-action" onclick="location.reload()">Empezar de nuevo</button>
+    </div>
+
+    <script>
+        let clicks = 5;
+
+        function checkPass() {
+            const pass = document.getElementById('passInput').value;
+            const error = document.getElementById('errorMsg');
+            if(pass === "2419") {
+                nextScreen(1);
+            } else {
+                error.style.display = 'block';
+                document.getElementById('passInput').value = "";
+                // Pequeña vibración visual de error
+                document.getElementById('screen0').classList.add('animate__shakeX');
+                setTimeout(() => document.getElementById('screen0').classList.remove('animate__shakeX'), 500);
+            }
+        }
+
+        function nextScreen(num) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('screen' + num).classList.add('active');
+        }
+
+        function tapConfetti() {
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            clicks--;
+            const display = document.getElementById('count-display');
+            display.innerText = clicks;
+            display.classList.add('animate__animated', 'animate__bounceIn');
+            setTimeout(() => display.classList.remove('animate__bounceIn'), 500);
+
+            if (clicks <= 0) {
+                setTimeout(() => nextScreen(3), 500);
+            }
+        }
+
+        function finalizar(titulo, desc) {
+            document.getElementById('chosen-title').innerText = "¡Plan Confirmado!";
+            document.getElementById('chosen-desc').innerText = "Has elegido: " + titulo + ". " + desc;
+            document.getElementById('final-message').style.display = 'flex';
+            
+            // Lluvia de confeti infinita
+            var duration = 15 * 1000;
+            var animationEnd = Date.now() + duration;
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+                confetti({ particleCount: 40, startVelocity: 30, spread: 360, origin: { x: Math.random(), y: Math.random() - 0.2 } });
+            }, 200);
+        }
+    </script>
+</body>
+</html>
